@@ -1,0 +1,32 @@
+name: make rules multi
+
+on:
+  
+
+  workflow_dispatch:
+
+jobs:
+  multi-build:
+    runs-on: windows-2019
+
+    steps:
+      - uses: actions/checkout@main
+      - name: run main
+        shell: cmd
+        continue-on-error: false
+        timeout-minutes: 15
+        run: |
+          .\test\parser\starter.cmd
+          exit
+
+      - name: commit
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add --all
+          git commit -m  "Last Update at $(date +"%Y-%m-%d %H:%M")"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
